@@ -14,18 +14,13 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-
 import { Image } from "expo-image";
-
 import * as ImagePicker from "expo-image-picker";
-
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
-
 export default function CreateScreen() {
   const router = useRouter();
   const { user } = useUser();
-
   const [caption, setCaption] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isSharing, setIsSharing] = useState(false);
@@ -37,13 +32,11 @@ export default function CreateScreen() {
       aspect: [1, 1],
       quality: 0.8,
     });
-
     if (!result.canceled) setSelectedImage(result.assets[0].uri);
   };
 
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
   const createPost = useMutation(api.posts.createPost);
-
   const handleShare = async () => {
   if (!selectedImage) return;
 
@@ -81,9 +74,6 @@ export default function CreateScreen() {
     setIsSharing(false);
   }
 };
-
-
-
 
   return (
     <KeyboardAvoidingView

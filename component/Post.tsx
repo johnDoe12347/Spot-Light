@@ -3,7 +3,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { styles } from "@/styles/feed.style";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useState } from "react";
@@ -32,26 +32,25 @@ type PostProps = {
 
 export default function Post({ post }: PostProps) {
   const [isLiked, setIsLiked] = useState(post.isLiked);
+  const [likeCount, setLikeCount] = useState(post.likes);
   const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
-
   const [showComments, setShowComments] = useState(false);
-
   const { user } = useUser();
-
   const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
 
-//   const toggleLike = useMutation(api.posts.toggleLike);
+  const toggleLike = useMutation(api.posts.toggleLike);
 //   const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
 //   const deletePost = useMutation(api.posts.deletePost);
 
-//   const handleLike = async () => {
-//     try {
-//       const newIsLiked = await toggleLike({ postId: post._id });
-//       setIsLiked(newIsLiked);
-//     } catch (error) {
-//       console.error("Error toggling like:", error);
-//     }
-//   };
+  const handleLike = async () => {
+    try {
+      const newIsLiked = await toggleLike({ postId: post._id });
+      setIsLiked(newIsLiked);
+      setLikeCount((prev) => prev + (newIsLiked ? 1 : -1));
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
 
 //   const handleBookmark = async () => {
 //     const newIsBookmarked = await toggleBookmark({ postId: post._id });

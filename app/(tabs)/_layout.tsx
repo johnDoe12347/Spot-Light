@@ -7,7 +7,7 @@ import { COLORS } from '@/constant/theme';
 
 const Layout = () => {
     return (
-      <Tabs 
+      <Tabs
       screenOptions={{
         tabBarShowLabel:false,
         headerShown:false,
@@ -58,7 +58,5 @@ const Layout = () => {
       </Tabs>
     );
 }
-
 const styles = StyleSheet.create({})
-
 export default Layout;

@@ -39,6 +39,46 @@ export const createPost = mutation({
   },
 });
 
+export const toggleLike = mutation({
+  args: {
+    postId: v.id("posts"),
+  },
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser (ctx);
+    const existing =await ctx.db
+    .query("likes")
+    .withIndex("by_user_and_post",(q) =>
+      q.eq("userId",currentUser._id).eq("postId",args.postId)
+    )
+    .first();
+    const post = await ctx.db.get(args.postId);
+    if (!post) throw new Error ("Post not found");
+    if (existing){
+      // unlike
+      await ctx.db.delete(existing._id);
+      // decrement like count
+      await ctx.db.patch(args.postId,{
+        likes: Math.max(0,post.likes -1),
+      });
+      return false;
+    }else{
+      // like
+      await ctx.db.insert ("likes",{ userId: currentUser._id, postId: args.postId});
+      if(currentUser._id !== post.userId){
+        // create notification
+        await ctx.db.insert ("notifications",{
+          reciverId: post.userId,
+          senderId: currentUser._id,
+          type: "like",
+          postId: post._id,
+        });
+      }
+      return true;
+    }
+  }});
+
+  
+
 export const getFeedPosts = query({
   handler: async (ctx) => {
     const currentUser = await getAuthenticatedUser(ctx);
@@ -47,7 +87,6 @@ export const getFeedPosts = query({
     const posts = await ctx.db.query("posts").order("desc").collect();
     if (posts.length === 0) return [];
 
-    // enhance posts with userdata and interaction status
     const postsWithInfo = await Promise.all(
       posts.map(async (post) => {
         const postAuthor = (await ctx.db.get(post.userId))!;

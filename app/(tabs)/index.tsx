@@ -14,12 +14,9 @@ import { styles } from "../../styles/feed.style";
 export default function Index() {
   const { signOut } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
-
   const posts = useQuery(api.posts.getFeedPosts);
-
   if (posts === undefined) return <Loader />;
   if (posts.length === 0) return <NoPostsFound />;
-
   // this does nothing
   const onRefresh = () => {
     setRefreshing(true);
