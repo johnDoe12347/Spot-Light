@@ -1,15 +1,17 @@
 // import Post from "@/component/Post";
 import { Loader } from "@/component/Loader";
 import Post from "@/component/Post";
-import StoriesSection from "@/component/Stories";
+// import StoriesSection from "@/component/Stories";  
 import { COLORS } from "@/constant/theme";
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "convex/react";
 import { useState } from "react";
-import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../../styles/feed.style";
+import { STORIES } from "@/constant/mock-data";
+import Story from "@/component/Story";
 
 export default function Index() {
   const { signOut } = useAuth();
@@ -34,7 +36,6 @@ export default function Index() {
           <Ionicons name="log-out-outline" size={24} color={COLORS.whitecolour} />
         </TouchableOpacity>
       </View>
-
       <FlatList
         data={posts}
         renderItem={({ item }) => <Post post={item} />}
@@ -52,6 +53,15 @@ export default function Index() {
       />
     </View>
   );
+}
+const StoriesSection =()=>{
+  return(
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.storiesContainer}>
+      {STORIES.map((story)=>(
+        <Story key={story.id} story={story}/>
+      ))}
+    </ScrollView>
+  )
 }
 
 const NoPostsFound = () => (
