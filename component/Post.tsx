@@ -11,6 +11,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 // import CommentsModal from "./CommentsModal";
 // import { formatDistanceToNow } from "date-fns";
 import { useUser } from "@clerk/clerk-expo";
+import CommentsModal from "./CommentsModal";
 
 type PostProps = {
   post: {
@@ -34,6 +35,7 @@ export default function Post({ post }: PostProps) {
   const [isLiked, setIsLiked] = useState(post.isLiked);
   const [likeCount, setLikeCount] = useState(post.likes);
   const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
+  const [commentCount, setCommentCount] = useState(post.comments);
   const [showComments, setShowComments] = useState(false);
   const { user } = useUser();
   const currentUser = useQuery(
@@ -169,12 +171,13 @@ export default function Post({ post }: PostProps) {
           {formatDistanceToNow(post._creationTime, { addSuffix: true })}
         </Text> */}
       </View>
-      {/* 
+
       <CommentsModal
         postId={post._id}
         visible={showComments}
         onClose={() => setShowComments(false)}
-      /> */}
+        onCommentAdded={() => setCommentCount((prev) => prev + 1)}
+      />
     </View>
   );
 }
